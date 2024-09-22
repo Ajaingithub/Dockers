@@ -1,4 +1,3 @@
-# DIsha is the best
 FROM ubuntu:20.04
 
 
