@@ -11,7 +11,7 @@ RUN apt-get update && \
     wget \
     unzip \
     default-jre \
-    build-essential \\
+    build-essential \
     zlib1g-dev \
     libbz2-dev \
     liblzma-dev \
