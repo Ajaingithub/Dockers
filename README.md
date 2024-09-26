@@ -6,4 +6,4 @@ Developing Docker for
    2. GATK
    3. PICARD
 
-2. Gene Regulatory Network (SCIENICPlus)
+2. Gene Regulatory Network (SCIENICPlus): it is install in the Conda environment
