@@ -1,5 +1,5 @@
 # Use an official Ubuntu as the base image
-# Make some new Changes very new
+# Make some new Changes
 FROM ubuntu:20.04
 
 # Set environment variables to avoid interactive prompts
