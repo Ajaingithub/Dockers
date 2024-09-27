@@ -18,26 +18,26 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean
 
 # Install Miniconda on x86 or ARM platforms
-ENV MINICONDA_PATH="/root/miniconda3"
-ENV PATH="${MINICONDA_PATH}/bin:${PATH}"
-RUN arch=$(uname -m) && \
-    # if [ "$arch" = "x86_64" ]; then \
-    MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"; \
-    # elif [ "$arch" = "aarch64" ]; then \
-    # MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh"; \
-    # else \
-    # echo "Unsupported architecture: $arch"; \
-    # exit 1; \
-    # fi && \
-    wget $MINICONDA_URL -O miniconda.sh && \
-    bash miniconda.sh -b -p $MINICONDA_PATH && \
-    rm -f miniconda.sh
+# ENV MINICONDA_PATH="/root/miniconda3"
+# ENV PATH="${MINICONDA_PATH}/bin:${PATH}"
+# RUN arch=$(uname -m) && \
+#     # if [ "$arch" = "x86_64" ]; then \
+#     MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"; \
+#     # elif [ "$arch" = "aarch64" ]; then \
+#     # MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh"; \
+#     # else \
+#     # echo "Unsupported architecture: $arch"; \
+#     # exit 1; \
+#     # fi && \
+#     wget $MINICONDA_URL -O miniconda.sh && \
+#     bash miniconda.sh -b -p $MINICONDA_PATH && \
+#     rm -f miniconda.sh
 
 # Check conda version
-RUN conda --version
+# RUN conda --version
 
 # Create the conda environment
-RUN conda create --name scenicplus python=3.11 -y
+# RUN conda create --name scenicplus python=3.11 -y
 
 # Clone the SCENIC+ repository
 RUN git clone https://github.com/aertslab/scenicplus /app/scenicplus
