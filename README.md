@@ -12,9 +12,11 @@ Developing Docker for
 
 ### Docker
 
+docker pull abhinavjain1993/wgs
 docker pull abhinavjain1993/scenicplus_docker:amd64
 
 ### Singularity
 
-singularity pull abhinavjain1993/scenicplus_docker:amd64
+singularity pull docker://abhinavjain1993/wgs
+singularity pull docker://abhinavjain1993/scenicplus_docker:amd64
 singularity exec –bind <Mounted_directory>:/data scenicplus_docker_latest.sif /bin/bash
