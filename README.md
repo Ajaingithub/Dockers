@@ -15,6 +15,14 @@ Developing Docker for
 docker pull abhinavjain1993/wgs
 docker pull abhinavjain1993/scenicplus_docker:amd64
 
+# For running docker in the arm64
+
+docker pull abhinavjain1993/scenicplus_docker:latest
+
+# Running the scenicplus, activate conda using
+
+source activate scenicplus
+
 ### Singularity
 
 singularity pull docker://abhinavjain1993/wgs
