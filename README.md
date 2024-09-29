@@ -27,4 +27,4 @@ source activate scenicplus
 
 singularity pull docker://abhinavjain1993/wgs
 singularity pull docker://abhinavjain1993/scenicplus_docker:amd64
-singularity exec –bind <Mounted_directory>:/data scenicplus_docker_latest.sif /bin/bash
+singularity exec –bind <Mounted_directory>:/data --contain-all scenicplus_docker_latest.sif /bin/bash

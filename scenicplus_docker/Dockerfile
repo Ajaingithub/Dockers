@@ -1,6 +1,8 @@
 # Use Ubuntu as the base image
 FROM ubuntu:20.04
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install system dependencies including build tools
 RUN apt-get update && apt-get install -y \
     wget \
@@ -11,11 +13,17 @@ RUN apt-get update && apt-get install -y \
     libbz2-dev \
     liblzma-dev \
     libncurses5-dev \
+    libfftw3-dev \
+    hdf5-tools \
+    libc++-dev \
     libcurl4-openssl-dev \
     curl \
     git \
-    ca-certificates \
-    && apt-get clean
+    ca-certificates
+
+RUN apt-get install -y --no-install-recommends apt-utils debconf locales locales-all && dpkg-reconfigure locales && \
+    apt-get install -y --no-install-recommends $BUILDPKGS
+
 
 # Install Miniconda on x86 or ARM platforms
 ENV MINICONDA_PATH="/root/miniconda3"
@@ -52,6 +60,7 @@ WORKDIR /app/scenicplus
 RUN git fetch --all && git branch -a | tee /dev/stderr && git checkout development || echo "Branch 'development' not found."
 
 # Activate the conda environment and install SCENIC+
+# Installing the package separately
 RUN /bin/bash -c "source activate scenicplus && pip install ."
 
 # Command to run when the container starts
