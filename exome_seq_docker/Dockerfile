@@ -43,7 +43,25 @@ RUN wget https://github.com/broadinstitute/picard/releases/download/3.1.0/picard
     mv picard.jar /opt/picard.jar && \
     ln -s /opt/picard.jar /usr/local/bin/picard.jar
 
-# Set the working directory
-WORKDIR /data
+# SRA tools
+RUN wget --output-document sratoolkit.tar.gz https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz && \
+    tar -xvzf sratoolkit.tar.gz && \
+    rm sratoolkit.tar.gz && \
+    mv sratoolkit.* /opt/sratoolkit && \
+    ln -s /opt/sratoolkit/bin/* /usr/local/bin/
+
+RUN wget http://www.openbioinformatics.org/annovar/download/0wgxR2rIVP/annovar.latest.tar.gz && \
+    tar -xvzf annovar.latest.tar.gz && \
+    rm annovar.latest.tar.gz && \
+    mv annovar /opt/annovar && \
+    ln -s /opt/annovar/convert2annovar.pl /usr/local/bin/convert2annovar.pl && \
+    ln -s /opt/annovar/annotate_variation.pl /usr/local/bin/annotate_variation.pl && \
+    ln -s /opt/annovar/table_annovar.pl /usr/local/bin/table_annovar.pl
+
+RUN wget https://github.com/usadellab/Trimmomatic/files/5854859/Trimmomatic-0.39.zip && \
+    unzip Trimmomatic-0.39 && \
+    rm Trimmomatic-0.39.zip && \
+    mv Trimmomatic-0.39 /opt/Trimmomatic && \
+    ln -s /opt/Trimmomatic/trimmomatic-0.39.jar /usr/local/bin/trimmomatic-0.39.jar
 
 CMD ["bash"]
