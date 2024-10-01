@@ -1,0 +1,2 @@
+sample_id,fastq1,fastq2
+DRR001913,/diazlab/data3/.abhinav/tools/singularity/data/DRR001913_1_10000.fastq,/diazlab/data3/.abhinav/tools/singularity/data/DRR001913_2_10000.fastq
