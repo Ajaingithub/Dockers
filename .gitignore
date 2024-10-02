@@ -4,6 +4,12 @@ Thumbs.db
 
 # Ignore log files
 *.log
+.nextflow.log.*
+.nextflow
 
 # Ignore temporary files
 *.tmp
+
+# Ignore intermediate files since large size
+work
+result

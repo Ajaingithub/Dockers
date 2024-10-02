@@ -44,3 +44,6 @@ java -jar /usr/local/bin/trimmomatic-0.39.jar PE -threads 4 DRR001913_1_10000.fa
 ###### Download the reference genome
 
 wget https://ftp.ensembl.org/pub/release-107/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
+
+### Added the nextflow files so while running one can directly run using nextflow
+nextflow run exome_seq_nextflow.nf --with-apptainer /diazlab/data3/.abhinav/tools/singularity/wgs_amd64.sif
