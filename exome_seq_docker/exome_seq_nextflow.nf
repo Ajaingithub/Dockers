@@ -2,17 +2,17 @@
 nextflow.enable.dsl=2
 
 params.samplefile = '/diazlab/data3/.abhinav/tools/docker/Dockers/exome_seq_docker/sample.csv'
-params.reference = '/diazlab/data3/.abhinav/tools/singularity/data/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz'
+params.reference = '/diazlab/data3/.abhinav/tools/docker/Dockers/exome_seq_docker/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz'
 
 // Quality Check
 process QC {
     publishDir "fastQC", mode: 'copy', pattern: "*", overwrite: true
 
     input:
-    tuple val(sample_id), path(fastq1), path(fastq2)
+    tuple val(sample_id), path(fastq1), path(fastq2),path(reference)
 
     output:
-    tuple val(sample_id), path("*.html")
+    tuple val(sample_id), path("*.html"),path(reference)
 
     script:
     """
@@ -25,10 +25,10 @@ process TRIM {
     publishDir "trimmed", mode: 'copy', pattern: "*", overwrite: true
 
     input:
-    tuple val(sample_id), path(fastq1), path(fastq2)
+    tuple val(sample_id), path(fastq1), path(fastq2),path(reference)
 
     output:
-    tuple val(sample_id), path("trim*.fastq"), path("*html")
+    tuple val(sample_id), path("trim*.fastq"),path(reference)
 
     script:
     """
@@ -51,26 +51,27 @@ process alignment {
     publishDir "alignment", mode: 'copy', pattern: "*", overwrite: true
 
     input:
-    tuple val(sample_id), path(trimmed)
+    tuple val(sample_id), path(trimmed),path(reference)
 
     output:
-    tuple val(sample_id), path("*.bam")
+    tuple val(sample_id), path("*.bam"),path(reference)
 
     script:
     """
-    bwa mem -t 10 ${params.reference} trim_${sample_id}_2_10000.fastq trim_${sample_id}_2_10000.fastq > ${sample_id}_bwa.sam
-    samtools view -S -b ${sample_id}_bwa.sam > ${sample_id}_bwa.bam
+    bwa mem -t 10 ${reference} trim_${sample_id}_2_10000.fastq trim_${sample_id}_2_10000.fastq > ${sample_id}_bwa.sam
     """
 }
 
+// samtools view -S -b ${sample_id}_bwa.sam > ${sample_id}_bwa.bam
 
 workflow {
     samples = Channel
         .fromPath(params.samplefile, type: 'file')
         .splitCsv(header: true, sep: ',')
-        .map { row -> tuple(row.sample_id, file(row.fastq1), file(row.fastq2)) }
+        .map { row -> tuple(row.sample_id, file(row.fastq1), file(row.fastq2),file(row.reference))}
         
         processed = QC(samples)
         trimmed = TRIM(samples)
+        trimmed.view()
         aligned = alignment(trimmed)
 }

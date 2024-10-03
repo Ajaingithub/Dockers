@@ -47,3 +47,6 @@ wget https://ftp.ensembl.org/pub/release-107/fasta/homo_sapiens/dna/Homo_sapiens
 
 ### Added the nextflow files so while running one can directly run using nextflow
 nextflow run exome_seq_nextflow.nf --with-apptainer /diazlab/data3/.abhinav/tools/singularity/wgs_amd64.sif
+
+Note
+While Running the singularity please keep all files in the same folder where you are working. 
