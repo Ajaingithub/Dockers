@@ -42,7 +42,7 @@ head -10000 DRR001913_1.fastq > DRR001913_1_10000.fastq
 java -jar /usr/local/bin/trimmomatic-0.39.jar PE -threads 4 DRR001913_1_10000.fastq DRR001913_2_10000.fastq trim_DRR001913_1_10000.fastq unpaired_DRR001913_1_10000.fastq trim_DRR001913_2_10000.fastq unpaired_DRR001913_2_10000.fastq AVGQUAL:20 SLIDINGWINDOW:5:20 MINLEN:50
 
 ###### Download the reference genome
-
+<!-- https://hitchhikersguidetoexomeanalysis.wordpress.com/exome-analysis-exercise/ -->
 wget https://ftp.ensembl.org/pub/release-107/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
 
 ### Added the nextflow files so while running one can directly run using nextflow
