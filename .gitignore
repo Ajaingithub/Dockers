@@ -2,6 +2,9 @@
 .DS_Store
 Thumbs.db
 
+# Big files
+*fa.g*
+
 # Ignore log files
 *.log
 .nextflow.log.*
