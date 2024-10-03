@@ -1,2 +1,2 @@
-sample_id,fastq1,fastq2,reference
-DRR001913,/diazlab/data3/.abhinav/tools/singularity/data/DRR001913_1_10000.fastq,/diazlab/data3/.abhinav/tools/singularity/data/DRR001913_2_10000.fastq,/diazlab/data3/.abhinav/tools/docker/Dockers/exome_seq_docker/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
+sample_id,fastq1,fastq2,reference,index_files
+DRR001913,/diazlab/data3/.abhinav/tools/singularity/data/DRR001913_1_10000.fastq,/diazlab/data3/.abhinav/tools/singularity/data/DRR001913_2_10000.fastq,/diazlab/data3/.abhinav/tools/docker/Dockers/exome_seq_docker/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz,/diazlab/data3/.abhinav/tools/docker/Dockers/exome_seq_docker/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz.*

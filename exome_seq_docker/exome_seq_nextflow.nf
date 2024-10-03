@@ -3,16 +3,17 @@ nextflow.enable.dsl=2
 
 params.samplefile = '/diazlab/data3/.abhinav/tools/docker/Dockers/exome_seq_docker/sample.csv'
 params.reference = '/diazlab/data3/.abhinav/tools/docker/Dockers/exome_seq_docker/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz'
+params.index_files = '/diazlab/data3/.abhinav/tools/docker/Dockers/exome_seq_docker/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz.*'
 
 // Quality Check
 process QC {
     publishDir "fastQC", mode: 'copy', pattern: "*", overwrite: true
 
     input:
-    tuple val(sample_id), path(fastq1), path(fastq2),path(reference)
+    tuple val(sample_id), path(fastq1), path(fastq2),path(reference),path(index_files)
 
     output:
-    tuple val(sample_id), path("*.html"),path(reference)
+    tuple val(sample_id), path("*.html"),path(reference),path(index_files)
 
     script:
     """
@@ -25,10 +26,10 @@ process TRIM {
     publishDir "trimmed", mode: 'copy', pattern: "*", overwrite: true
 
     input:
-    tuple val(sample_id), path(fastq1), path(fastq2),path(reference)
+    tuple val(sample_id), path(fastq1), path(fastq2),path(reference),path(index_files)
 
     output:
-    tuple val(sample_id), path("trim*.fastq"),path(reference)
+    tuple val(sample_id), path("trim*.fastq"),path(reference),path(index_files)
 
     script:
     """
@@ -47,31 +48,47 @@ process TRIM {
 
 // Alignment to the reference genome
 // before aligning this one should have index the reference genome using bwa index <ref genome>
-process alignment {
+process ALIGN {
     publishDir "alignment", mode: 'copy', pattern: "*", overwrite: true
 
     input:
-    tuple val(sample_id), path(trimmed),path(reference)
+    tuple val(sample_id), path(trimmed),path(reference), path(index_files)
 
     output:
-    tuple val(sample_id), path("*.bam"),path(reference)
+    tuple val(sample_id), path("*bwa_sorted.bam")
 
     script:
     """
     bwa mem -t 10 ${reference} trim_${sample_id}_2_10000.fastq trim_${sample_id}_2_10000.fastq > ${sample_id}_bwa.sam
+    samtools view -S -b ${sample_id}_bwa.sam > ${sample_id}_bwa.bam
+    samtools sort ${sample_id}_bwa.bam ${sample_id}_bwa_sorted.bam
     """
 }
 
-// samtools view -S -b ${sample_id}_bwa.sam > ${sample_id}_bwa.bam
+process DUP_REMOVE {
+    publishDir "alignment", mode: 'copy', pattern: "*", overwrite: true
+
+    input:
+    tuple val(sample_id), path(aligned)
+
+    output:
+    tuple val(sample_id), path("*.ba*")
+
+    script:
+    """
+    
+    samtools index ${sample_id}_bwa_sorted.bam
+    """
+}
 
 workflow {
     samples = Channel
         .fromPath(params.samplefile, type: 'file')
         .splitCsv(header: true, sep: ',')
-        .map { row -> tuple(row.sample_id, file(row.fastq1), file(row.fastq2),file(row.reference))}
+        .map { row -> tuple(row.sample_id, file(row.fastq1), file(row.fastq2),file(row.reference),file(row.index_files))}
         
         processed = QC(samples)
         trimmed = TRIM(samples)
         trimmed.view()
-        aligned = alignment(trimmed)
+        aligned = ALIGN(trimmed)
 }
