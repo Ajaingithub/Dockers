@@ -64,6 +64,23 @@ process ALIGN {
     """
 }
 
+process REM_DUP{
+    publishDir "alignment", mode: 'copy', pattern: "*", overwrite: true
+
+    input:
+    tuple val(sample_id), path(aligned)
+
+    output:
+    tuple val(sample_id), path("*_sorted_marked.ba*"),path("*_metric_summary")
+
+    script:
+    """
+    java -jar /usr/local/bin/picard.jar MarkDuplicates I=${aligned} O=${sample_id}_sorted_marked.bam M=${sample_id}_picard_info.txt REMOVE_DUPLICATES=true AS=true
+    samtools index ${sample_id}_sorted_marked.bam
+    samtools flagstat ${sample_id}_sorted_marked.bam > ${sample_id}_metric_summary
+    """
+}
+
 workflow {
     samples = Channel
         .fromPath(params.samplefile, type: 'file')
@@ -78,5 +95,6 @@ workflow {
         tuple(sample_id, trimmed_fastq, file(params.index))
     }
 
-    ALIGN(aligned)
+    bamfile_ch=ALIGN(aligned)
+    duprem_ch=REM_DUP(bamfile_ch)
 }
