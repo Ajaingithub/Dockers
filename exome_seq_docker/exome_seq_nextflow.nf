@@ -3,7 +3,8 @@ nextflow.enable.dsl=2
 
 params.samplefile = '/diazlab/data3/.abhinav/tools/docker/Dockers/exome_seq_docker/sample.csv'
 params.reference = '/diazlab/data3/.abhinav/tools/singularity/data/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz'
-params.index = '/diazlab/data3/.abhinav/tools/singularity/data/Homo_sapiens.GRCh38.dna.primary_assembly.fa.g*'
+params.gatkreference = '/diazlab/data3/.abhinav/tools/singularity/data/Homo_sapiens.GRCh38.dna.primary_assembly.fa'
+params.index = '/diazlab/data3/.abhinav/tools/singularity/data/Homo_sapiens.GRCh38.dna.primary_assembly.fa.*'
 
 // Quality Check
 process QC {
@@ -71,7 +72,7 @@ process REM_DUP{
     tuple val(sample_id), path(aligned)
 
     output:
-    tuple val(sample_id), path("*_sorted_marked.ba*"),path("*_metric_summary")
+    tuple val(sample_id), path("*_sorted_marked.bam"),path("*_sorted_marked.bam.bai") ,path("*_metric_summary")
 
     script:
     """
@@ -79,6 +80,22 @@ process REM_DUP{
     samtools index ${sample_id}_sorted_marked.bam
     samtools flagstat ${sample_id}_sorted_marked.bam > ${sample_id}_metric_summary
     """
+}
+
+process VAR_CALL{
+    publishDir "alignment", mode: 'copy', pattern: "*", overwrite: true
+
+    input:
+    tuple val(sample_id), path(rem_dup), path(gatkref), path(index)
+
+    output:
+    tuple val(sample_id), path("*.vcf.gz")
+
+    script:
+    """
+    gatk --java-options "-Xmx4g" HaplotypeCaller -R ${gatkref} -I ${sample_id}_sorted_marked.bam -O ${sample_id}.vcf.gz
+    """
+
 }
 
 workflow {
@@ -97,4 +114,12 @@ workflow {
 
     bamfile_ch=ALIGN(aligned)
     duprem_ch=REM_DUP(bamfile_ch)
+    
+    varcall_ch = duprem_ch.map { sample_id, bam, bai, metrics ->
+        tuple(sample_id, bam, file(params.gatkreference), file(params.index)) 
+        }
+
+    varcall_ch.view()
+
+    varcall = VAR_CALL(varcall_ch)
 }
