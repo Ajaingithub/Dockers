@@ -33,13 +33,14 @@ singularity pull docker://abhinavjain1993/scenicplus_docker:amd64
 singularity exec --bind <Mounted_directory>:/data --contain-all scenicplus_docker_latest.sif /bin/bash
 
 ##### Running a WGS files on the server
-
+'''
 singularity pull docker://abhinavjain1993/wgs:amd64
 singularity exec -bind /diazlab/data3/.abhinav/tools/singularity/data/:/data --contain-all wgs_amd64.sif /bin/bash
 fasterq-dump --split-3 DRR001913 -O ./ -t ./tmp/
 head -10000 DRR001913_2.fastq > DRR001913_2_10000.fastq
 head -10000 DRR001913_1.fastq > DRR001913_1_10000.fastq
 java -jar /usr/local/bin/trimmomatic-0.39.jar PE -threads 4 DRR001913_1_10000.fastq DRR001913_2_10000.fastq trim_DRR001913_1_10000.fastq unpaired_DRR001913_1_10000.fastq trim_DRR001913_2_10000.fastq unpaired_DRR001913_2_10000.fastq AVGQUAL:20 SLIDINGWINDOW:5:20 MINLEN:50
+'''
 
 ###### Download the reference genome
 <!-- https://hitchhikersguidetoexomeanalysis.wordpress.com/exome-analysis-exercise/ -->
