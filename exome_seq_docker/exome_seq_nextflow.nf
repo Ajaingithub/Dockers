@@ -2,9 +2,9 @@
 nextflow.enable.dsl=2
 
 params.samplefile = '/diazlab/data3/.abhinav/tools/docker/Dockers/exome_seq_docker/sample.csv'
-params.reference = '/diazlab/data3/.abhinav/tools/singularity/data/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz'
-params.gatkreference = '/diazlab/data3/.abhinav/tools/singularity/data/Homo_sapiens.GRCh38.dna.primary_assembly.fa'
-params.index = '/diazlab/data3/.abhinav/tools/singularity/data/Homo_sapiens.GRCh38.dna.primary_assembly.fa.*'
+params.reference = '/diazlab/data3/.abhinav/tools/singularity/data/resources/reference/Homo_sapiens.GRCh38.dna.primary_assembly.fa'
+params.index = '/diazlab/data3/.abhinav/tools/singularity/data/resources/reference/Homo_sapiens.GRCh38.dna.primary_assembly.fa.*'
+params.gatkindex = '/diazlab/data3/.abhinav/tools/singularity/data/resources/reference/Homo_sapiens.GRCh38.dna.primary_assembly.dict'
 
 // Quality Check
 process QC {
@@ -83,10 +83,10 @@ process REM_DUP{
 }
 
 process VAR_CALL{
-    publishDir "alignment", mode: 'copy', pattern: "*", overwrite: true
+    publishDir "variant", mode: 'copy', pattern: "*", overwrite: true
 
     input:
-    tuple val(sample_id), path(rem_dup), path(gatkref), path(index)
+    tuple val(sample_id), path(rem_dup), path(gatkref), path(index),path(gatkindex)
 
     output:
     tuple val(sample_id), path("*.vcf.gz")
@@ -116,7 +116,7 @@ workflow {
     duprem_ch=REM_DUP(bamfile_ch)
     
     varcall_ch = duprem_ch.map { sample_id, bam, bai, metrics ->
-        tuple(sample_id, bam, file(params.gatkreference), file(params.index)) 
+        tuple(sample_id, bam, file(params.reference), file(params.index), file(params.gatkindex)) 
         }
 
     varcall_ch.view()
